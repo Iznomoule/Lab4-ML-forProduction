@@ -34,10 +34,10 @@ jobs:
       working-directory: ./backend
       run: npm test
 
-    - name: Merge dev to main
-      if: success()
-      uses: "pascalgn/automerge-action@v0.14.3"
+    - name: Automerge dev to main
+      uses: pascalgn/automerge-action@v0.14.3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        target_branch: main
-        branch: dev
-        commit_message: "Automated merge from dev to main"
+        merge_method: squash
+    
