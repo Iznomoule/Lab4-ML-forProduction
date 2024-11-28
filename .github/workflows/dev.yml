@@ -5,6 +5,10 @@ on:
     branches:
       - dev
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -34,10 +38,19 @@ jobs:
       working-directory: ./backend
       run: npm test
 
-    - name: Automerge dev to main
-      uses: pascalgn/automerge-action@v0.14.3
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        merge_method: squash
+  merge-to-main:
+    needs: build-and-test
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Merge Dev to Main
+        uses: devmasx/merge-branch@v1.4.0
+        with:
+          from_branch: dev
+          target_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
     
